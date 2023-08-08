@@ -65,4 +65,9 @@ fn test_iter() {
     // 可以被3整除的数据之和
     let sum = vec.iter().filter(|y| *y % 3 == 0).sum::<i32>();
     println!("the sum is {}", sum);
+
+    // 对vec进行排序
+    let mut vec2 = vec![23, 879, 98];
+    vec2.sort();
+    println!("the vec2 is {:?}", vec2);
 }
