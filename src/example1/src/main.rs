@@ -1,8 +1,13 @@
+use std::thread;
 fn main() {
     println!("Hello, world!");
     let vec = vec![1, 2];
     // test_fn_once(|z| z == vec.len());
-    test_fn_once_copy(|z| z == vec.len());
+    // test_fn_once_copy(|z| z == vec.len());
+    let join_handler = thread::spawn(move || {
+        println!("the vec is {:?}", v);
+    });
+    join_handler.join().unwrap();
 }
 
 struct Cacher<T> where T: Fn(u32) -> u32 {
