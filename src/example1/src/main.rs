@@ -4,10 +4,17 @@ fn main() {
     let vec = vec![1, 2];
     // test_fn_once(|z| z == vec.len());
     // test_fn_once_copy(|z| z == vec.len());
-    let join_handler = thread::spawn(move || {
-        println!("the vec is {:?}", v);
+
+    let v = vec![1, 2, 3];
+    let handle = thread::spawn(move || {
+        println!("Here's a vector: {:?}", v);
     });
-    join_handler.join().unwrap();
+    handle.join().unwrap();
+
+    let mut s = String::new();
+    let mut update_str = |str| s.push_str(str);
+    let result = update_str("update");
+    println!("{:?}", s);
 }
 
 struct Cacher<T> where T: Fn(u32) -> u32 {
