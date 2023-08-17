@@ -29,8 +29,19 @@ fn main() {
     }
     println!("stack: {:?}", stack);
 
-    let sum = stack.into_iter().sum::<i32>();
-    println!("sum: {:?}", sum);
+    // let sum = stack.into_iter().sum::<i32>();
+    // println!("sum: {:?}", sum);
+
+    let iter_sum:i32 = stack.iter().sum();
+    println!("iter_sum: {:?}", iter_sum);
+
+    let mut addend = 0;
+    for x in stack.iter_mut() {
+        *x += 1;
+        addend += 1;
+    }
+    println!("addend: {:?}", addend);
+    println!("stack: {:?}", stack);
 }
 
 #[derive(Debug)]
@@ -98,6 +109,25 @@ impl<T> Stack<T> {
         MyInToIter(self)
     }
 
+    fn iter(&self) -> MyIter<T> {
+        let mut iterator = MyIter {
+            stack: Vec::new()
+        };
+        for item in self.data.iter() {
+            iterator.stack.push(item);
+        }
+        iterator
+    }
+
+    fn iter_mut(&mut self) -> MyIterMut<T> {
+        let mut iterator = MyIterMut {
+            stack: Vec::new()
+        };
+        for item in self.data.iter_mut() {
+            iterator.stack.push(item);
+        }
+        iterator
+    }
 }
 
 struct MyInToIter<T> (Stack<T>);
