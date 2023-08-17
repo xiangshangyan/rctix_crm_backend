@@ -1,3 +1,5 @@
+use std::vec::IntoIter;
+
 fn main() {
     println!("Hello, world!");
 
@@ -20,8 +22,15 @@ fn main() {
     let peek = stack.peek();
     println!("peek: {:?}", peek);
 
-    let mut peek_mut = stack.peek_mut();
+    let peek_mut = stack.peek_mut();
     println!("peek_mut: {:?}", peek_mut);
+    if let Some(top) = peek_mut {
+        *top = 10;
+    }
+    println!("stack: {:?}", stack);
+
+    let sum = stack.into_iter().sum::<i32>();
+    println!("sum: {:?}", sum);
 }
 
 #[derive(Debug)]
@@ -82,6 +91,51 @@ impl<T> Stack<T> {
             None
         } else {
             Some(&mut self.data[self.size - 1])
+        }
+    }
+
+    fn into_iter(self) -> MyInToIter<T> {
+        MyInToIter(self)
+    }
+
+}
+
+struct MyInToIter<T> (Stack<T>);
+// 实现迭代器trait
+impl<T> Iterator for MyInToIter<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+struct MyIter<'a, T: 'a> {
+    stack: Vec<&'a T>
+}
+impl <'a, T> Iterator for MyIter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.stack.is_empty() {
+            None
+        } else {
+            self.stack.pop()
+        }
+    }
+}
+
+struct MyIterMut<'a, T: 'a> {
+    stack: Vec<&'a mut T>
+}
+impl <'a, T> Iterator for MyIterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.stack.is_empty() {
+            None
+        } else {
+            self.stack.pop()
         }
     }
 }
