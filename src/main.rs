@@ -1,3 +1,5 @@
+mod config;
+
 use actix_web::{App, HttpRequest, HttpServer, post, Responder, web};
 use rbatis::{crud, impl_select, RBatis};
 use rbatis::rbdc::datetime::DateTime;
@@ -30,7 +32,7 @@ async fn index(req: HttpRequest) -> String {
     let mut rb = RBatis::new();
     /// connect to database
     // sqlite
-    rb.init(MysqlDriver {}, "mysql://root:Yan123456@127.0.0.1:13306/coin_zeus").unwrap();
+    rb.init(MysqlDriver {}, &*config::get_conn_string()).unwrap();
 
     // crud!(Account{});
     impl_select!(Account{select_by_id(id:String) -> Option => "`where id = #{id} limit 1`"});
@@ -48,7 +50,7 @@ async fn select_by_ids(req: HttpRequest) -> String {
     let mut rb = RBatis::new();
     /// connect to database
     // sqlite
-    rb.init(MysqlDriver {}, "mysql://root:Yan123456@127.0.0.1:13306/coin_zeus").unwrap();
+    rb.init(MysqlDriver {}, &*config::get_conn_string()).unwrap();
     let mut ids = Vec::new();
     ids.push("1014041506545352708");
     ids.push("1014041506545352711");
