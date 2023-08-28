@@ -1,11 +1,11 @@
-mod config;
-
-use actix_web::{App, HttpRequest, HttpServer, post, Responder, web};
+use actix_web::{App, HttpRequest, HttpResponse, HttpServer, post, Responder, Result, web};
 use rbatis::{crud, impl_select, RBatis};
 use rbatis::rbdc::datetime::DateTime;
 use rbatis::rbdc::decimal::Decimal;
 use rbdc_mysql::driver::MysqlDriver;
 use serde::Deserialize;
+
+mod config;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -17,6 +17,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::resource("/hello").to(index))
             .service(register)
             .service(web::resource("/selectByIds").to(select_by_ids))
+            .service(web::resource("/selectByIdsJson").to(select_by_ids_json))
     })
         .bind(("127.0.0.1", 8080))?
         .run()
@@ -56,7 +57,6 @@ async fn select_by_ids(req: HttpRequest) -> String {
     ids.push("1014041506545352711");
     ids.push("1014041506545352712");
 
-    crud!(Account{});
     let data = Account::select_in_column(&mut rb, "id", &ids).await;
     match data {
         Ok(results) => {
@@ -77,6 +77,25 @@ async fn select_by_ids(req: HttpRequest) -> String {
 
     // serde_json::to_string(&test).expect("open failed")
     "string".to_string()
+}
+
+async fn select_by_ids_json(req: HttpRequest) -> Result<HttpResponse> {
+    println!("REQ:{req:?}");
+
+    // fast_log::init(fast_log::Config::new().console()).expect("rbatis init fail");
+    /// initialize rbatis. also you can call rb.clone(). this is  an Arc point
+    let mut rb = RBatis::new();
+    /// connect to database
+    // sqlite
+    rb.init(MysqlDriver {}, &*config::get_conn_string()).unwrap();
+    let mut ids = Vec::new();
+    ids.push("1014041506545352708");
+    ids.push("1014041506545352711");
+    ids.push("1014041506545352712");
+
+    crud!(Account{});
+    let data = Account::select_in_column(&mut rb, "id", &ids).await;
+    Ok(HttpResponse::Ok().json(data))
 }
 
 
