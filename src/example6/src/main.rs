@@ -35,7 +35,7 @@ impl<T> Parse for T where T: FromStr + Default {
 #[test]
 fn parse_should_work() {
     assert_eq!(u32::parse("123abcd"), Ok(123));
-    assert_eq!(u32::parse("123.45abcd"), Err("failed to parse captured string".into()));
+    assert_eq!(u32::parse("123.45abcd"), Err("Invalid number".into()));
     assert_eq!(f64::parse("123.45abcd"), Ok(123.45));
     assert!(f64::parse("abcd").is_err());
 }
